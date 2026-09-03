@@ -1,8 +1,10 @@
 # PrintFEA
 
-**Guided, FDM-aware structural screening in FreeCAD.**
+**Guided, FDM-aware stress test screening in FreeCAD.**
 
-PrintFEA is a Linux-focused FreeCAD workbench that wraps FreeCAD FEM, Gmsh, and CalculiX in a guided workflow for FDM 3D-printed parts. It is designed for users who want to answer practical questions such as:
+PrintFEA is a Linux-focused FreeCAD workbench plug-in that wraps FreeCAD FEM, Gmsh, and CalculiX in a guided workflow for FDM 3D-printed parts. 
+
+It is designed for users who want to answer practical questions such as:
 
 - Where is this part fixed?
 - Where and how is it loaded?
@@ -11,7 +13,7 @@ PrintFEA is a Linux-focused FreeCAD workbench that wraps FreeCAD FEM, Gmsh, and 
 - Does the part meet a chosen safety-factor target?
 - Where is the likely high-utilization/failure region?
 
-PrintFEA is a **design-screening tool**, not engineering certification. The built-in filament profiles are conservative generic approximations and should not be treated as manufacturer-specific material certificates.
+PrintFEA is a **design-screening tool**. The built-in filament profiles are conservative generic approximations and should not be treated as manufacturer-specific material certificates.
 
 ![PrintFEA FDM safety result](docs/images/results-fdm-safety.png)
 
@@ -60,7 +62,7 @@ PrintFEA expects:
 3. CalculiX (`ccx`) for the structural solve.
 4. A valid native FreeCAD solid or STEP-derived solid.
 
-**STEP is strongly recommended.** STL is intentionally not converted inside PrintFEA: STL triangulation has already lost the original CAD faces/surfaces, and dense mesh-to-BRep conversion is unreliable and often counterproductive for FEM setup.
+**STEP is strongly recommended.** You will need to convert your STL to a STEP if that is all you have.
 
 ## Installation
 
