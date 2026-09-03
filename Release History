@@ -1,0 +1,95 @@
+## v0.5.9 — Release-readiness cleanup
+
+v0.5.9 keeps the validated solver physics unchanged and removes the experimental STL → STEP conversion utility. PrintFEA now intentionally focuses on native FreeCAD solids and STEP-derived CAD geometry, which is substantially more reliable for face selection, meshing, and structural analysis than converting dense triangle meshes into huge faceted B-Reps.
+
+The release-readiness features remain: **Save Setup / Load Setup**, saved-run **Compare**, persistent diagnostics, the in-app Help system, and the repeatable `examples/create_test_bar.py` validation model. Saved configurations live inside the FreeCAD document and preserve model/process settings, build orientation, constraints, distributed loads, clicked contact loads, mesh quality, and target safety factor.
+
+## v0.4.3 — Editable contact patches + failure regions
+
+v0.4.3 makes clicked contact-patch loads editable after placement: select a saved load, change total force, direction, contact diameter, or ideal-point mode, then click **Update selected**. The 3D preview now draws a translucent footprint disk with its diameter label. CAUTION/FAIL results now highlight a small cloud of high-utilization FEM nodes around the governing hotspot and label the predicted mode in plain language (for example **Layer separation**, **Inter-layer shear**, or **Along-layer normal stress**).
+
+## v0.4.2 — Parallel structure slicing + finite contact patches
+
+v0.4.2 runs independent print-structure slices concurrently across CPU processes (Auto uses up to four) and applies a per-slice watchdog. A pathological OCCT slice that exceeds the Advanced **Slow-slice limit** is terminated and conservatively receives no additional dense-shell credit instead of stalling the entire structure estimate indefinitely. GPU acceleration is not used because these OCCT B-Rep slice/offset operations are CPU-bound.
+
+Clicked loads now default to a finite **contact patch**. The force entered by the user is the **total force** for that click; after meshing, PrintFEA finds compatible surface nodes inside the entered contact diameter and distributes the total force across them with normalized CalculiX `*CLOAD` entries. An **Ideal mathematical point load** remains available under Advanced, but it deliberately places the entire force on one node and therefore creates a local stress singularity.
+
+## v0.4.1 — Non-blocking structure calculation
+
+v0.4.2 parallelizes the background layer-sliced wall/infill estimator across independent CPU processes and adds a per-slice watchdog so pathological OCCT offsets cannot stall indefinitely. GPU acceleration is not used because these B-Rep operations are CPU/OCCT-bound. v0.4.1 moved the expensive estimator out of FreeCAD's GUI process. PrintFEA exports the selected exact B-Rep to a temporary file and launches the matching `FreeCADCmd` executable as a headless worker. Slice/offset progress is streamed back to the wizard, and a **Cancel** button can terminate the worker. A pathological OCCT slice may still take time in the child process, but it can no longer block FreeCAD's main Qt event loop or trigger the desktop's “FreeCAD is not responding” dialog. If **Run Analysis** needs a stale print-structure estimate, PrintFEA starts the same background calculation and automatically continues into meshing/CalculiX only after the result returns successfully. Changing structure settings while a calculation is running cancels the obsolete worker rather than applying stale geometry data.
+
+## v0.4.0 — Point forces + failure-location highlighting
+
+v0.4.2 changes clicked loads to finite contact patches by default: the entered force is the TOTAL force and is distributed across nearby surface mesh nodes inside a user-set diameter. An advanced ideal one-node point mode remains available. v0.4.0 added arbitrary clicked point forces and automatic likely-failure-region highlighting. Point forces can be placed by clicking anywhere on the CAD model surface; each click stores its own force magnitude/direction and is mapped to the nearest compatible FEM node after meshing, then written to CalculiX as a nodal `*CLOAD`. Multiple point forces can be combined with the existing distributed face load. Because mathematical point loads create local stress singularities, PrintFEA warns users not to interpret stress immediately at the loaded node as a physical contact stress.
+
+CAUTION and FAIL results now automatically show a 3D `LIKELY FAILURE` marker at the representative high-utilization region associated with the screening verdict. The marker is explicitly an approximate FEM hotspot rather than a predicted crack path; Advanced Details preserve both representative and absolute peak locations for mesh-convergence review.
+
+## v0.3.4 — Cleaner frameless wizard sections
+
+v0.3.4 keeps the responsive structure sampling introduced in v0.3.3 but removes the visually noisy card borders from the setup wizard. Collapsible sections now use a bold frameless header, whitespace/indentation, and a subtle divider. A theme-style cascade in the previous card implementation could also make ordinary labels such as Force and Direction appear boxed; v0.3.4 scopes section styling to the section body itself so labels and controls retain FreeCAD's native appearance. Solver physics and geometry estimation are unchanged.
+
+## v0.3.3 — Responsive structure sampling + wizard polish
+
+v0.3.3 keeps the v0.3.2 visual polish and reduces UI stalls during difficult wall/infill geometry calculations. The layer-sliced estimator now defaults to a Balanced 48-slice budget (Fast 24 and High accuracy 96 are available in Advanced mode), and Qt events are pumped between individual slice and wall-offset operations rather than only once per slice. The analysis physics are otherwise unchanged. Numbered setup sections are now collapsible cards with clearer completion indicators, spacing is tighter, common face-selection actions use compact button rows, form labels share the same hover help as their fields, and the New Analysis toolbar icon is now a purpose-built meshed-part + load-arrow symbol instead of the old mountain placeholder. The v0.3 UI remains concise and decision-oriented: technical controls live behind an Advanced toggle, nearly every field has a hover tooltip, the toolbar includes searchable in-app Help, and required setup sections show completion indicators. The underlying analysis remains the validated layer-aware orthotropic + slicer-style layer-sliced shell/core workflow. The expensive geometry estimator still runs only on demand or once when Run Analysis needs a stale estimate. Changes to walls, infill, line width, layer height, or build orientation now mark the estimate as **Needs refresh**; the user can explicitly click **Calculate print structure**, and **Run Analysis** automatically refreshes a stale estimate once before meshing. The calculation yields back to Qt between sampled layers so the FreeCAD window stays responsive. PrintFEA samples the CAD solid perpendicular to the captured build direction, reconstructs each planar section including holes/islands, and offsets that section inward one line width per requested wall. The remaining cross-sectional core is integrated through the part. This prevents opposing walls from being double-counted and handles holes, ribs, thin regions, and build orientation more like a real slicer. The remaining core is homogenized according to infill density, and the resulting stiffness/strength multipliers affect both the CalculiX solve and FDM safety screen.
+
+In the default **Layer-aware orthotropic** mode:
+
+- the captured **BUILD PLATE / BOTTOM** face defines the layer-stack direction;
+- local material axes **1 and 2** lie in the printed layer plane;
+- local material axis **3** points through the layer stack / build direction;
+- CalculiX receives orthotropic engineering constants (`E1/E2/E3`, Poisson ratios, and `G12/G13/G23`);
+- CalculiX is asked to return stresses in those same local material axes;
+- PrintFEA separately evaluates in-layer normal stress, through-layer normal stress, in-layer shear, and inter-layer shear;
+- the results window reports the governing FDM failure mode and directional utilization.
+
+A legacy **Isotropic conservative** mode remains available for comparison and troubleshooting.
+
+> **Important:** PrintFEA is a design-screening tool, not engineering certification. The built-in filament profiles are generic conservative approximations, not manufacturer- or printer-specific coupon data. v0.3.3 uses real CAD cross-sections for the shell/core volume split, but it still solves one homogenized continuum; it does not explicitly mesh every extrusion path, infill cell, separate top/bottom skin stack, void, seam, support interface, or print defect.
+
+## What v0.3.3 can do
+
+- STEP / FreeCAD solid workflow (one valid solid per analysis).
+- Non-modal guided setup while the FreeCAD 3D viewport remains interactive.
+- PLA, PETG, ASA, ABS, and Nylon/PA generic screening profiles.
+- Experimental **wall count + infill** homogenization that affects stiffness, displacement, directional allowables, utilization, and safety factor.
+- User-entered **wall line width** (default 0.42 mm) so perimeter count maps to an estimated shell thickness.
+- Layer-sliced 2D perimeter/core measurement using the actual CAD solid; failed wall passes keep the last valid core conservatively, and a total slicing failure falls back to no shell credit rather than the old area estimate.
+- Results report estimated effective material fraction and the applied stiffness/strength scaling.
+- Default layer-aware orthotropic material model plus legacy isotropic mode.
+- Capture the actual face that sat on the printer bed.
+- 3D **BUILD UP** direction preview with flip control and adjustable arrow size.
+- Persistent build/fixed/load face highlighting.
+- Add, remove, or clear captured faces without restarting the analysis.
+- Fixed / mounting face capture.
+- Loaded face capture.
+- Force magnitude in Newtons and ±global X/Y/Z direction.
+- 3D **FORCE** preview with adjustable arrow size.
+- Fast / Normal / Fine automatic Gmsh meshing.
+- Gmsh high-order optimization and an automatic **refined first-order** fallback for nonpositive-Jacobian failures.
+- Automated CalculiX solve with useful error reporting instead of only generic error 201.
+- Automatic newest-result isolation and opening of `Pipeline_CCX_Results`.
+- Native stress and displacement color maps with explicit unit guidance.
+- Independent, reopenable **Analysis Results** window.
+- **View Recent PrintFEA Results** toolbar/menu command.
+- Saved per-run summary data in the FreeCAD document.
+- Maximum displacement and peak / 99th-percentile von Mises stress.
+- Directional FDM utilization and safety-factor screening in layer-aware mode.
+- Governing mode reporting such as in-layer normal, through-layer/layer-separation, or inter-layer shear.
+
+## Wall / infill model (v0.3.0 experimental)
+
+PrintFEA does **not** generate individual infill cells. Instead it performs a slicer-style cross-section integration aligned to the captured build direction:
+
+1. Estimate the physical layer count from the model span and entered layer height.
+2. Sample up to 128 evenly-spaced print-layer cross-sections (every physical layer is used when there are 128 or fewer).
+3. Reconstruct each planar material region from FreeCAD `TopoShape.slice()` wires using the Bullseye face maker, preserving holes and islands.
+4. Offset that 2-D section inward **one wall line width at a time**, once per requested wall.
+5. Integrate the remaining core areas through the model to obtain core volume. `shell volume = exact CAD volume - integrated core volume`.
+6. Only the remaining core receives the entered infill-density reduction.
+7. Effective stiffness and strength are reduced from the 100%-structural-fill material profile. Sparse-core stiffness receives a somewhat stronger nonlinear penalty than strength; both converge to the base material at 100% infill.
+
+This is much closer to slicer perimeter logic than the old whole-solid offset or side-area estimate. Opposing walls do not double-count the same region, holes carry their own perimeters, and thin ribs naturally lose core as successive perimeter offsets consume the cross-section. Build orientation also changes the sampled slices.
+
+If an individual 2-D wall offset cannot be completed, PrintFEA **keeps the last valid core area for that slice** and stops crediting additional walls there. That is deliberately conservative. If a slice itself cannot be reconstructed, it receives no perimeter-shell benefit. If the entire slice calculation fails, PrintFEA falls back to a conservative **no-shell** model rather than the optimistic legacy side-area estimate. Saved results record sample count, estimated print-layer count, partial-wall slices, section failures, and integration error.
+
+This remains a screening approximation. PrintFEA does not yet collect separate top/bottom solid-layer counts or explicitly reproduce slicer path planning, overlap, gap fill, infill pattern, raster angle, seams, or voids.
