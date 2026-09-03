@@ -57,6 +57,11 @@ The built-in filament profiles are conservative generic approximations and shoul
 
 v0.6.2 makes the installed version visible directly in the analysis wizard and adds a prominent **Self-Test** button there. v0.6.1 introduced the analytical cantilever self-test with dedicated validation results, automatic load-linearity checks, and mesh-convergence checks; v0.6.0 introduced the validation material and custom material manager.
 
+<img width="746" height="105" alt="Screenshot from 2026-09-03 12-32-00" src="https://github.com/user-attachments/assets/8a18df0a-0cea-4b60-9ffe-afe1d7f030dd" />
+
+<img width="1793" height="762" alt="Screenshot from 2026-09-03 12-34-28" src="https://github.com/user-attachments/assets/cdee416c-bca2-4e7a-aebe-2f97e3c56386" />
+
+
 ### Tested environment
 
 - Linux
