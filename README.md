@@ -15,7 +15,9 @@ It is designed for users who want to answer practical questions such as:
 
 PrintFEA is a **design-screening tool**. The built-in filament profiles are conservative generic approximations and should not be treated as manufacturer-specific material certificates.
 
-![PrintFEA FDM safety result](docs/images/results-fdm-safety.png)
+<img width="1500" height="593" alt="results-fdm-safety" src="https://github.com/user-attachments/assets/a734b4b7-758e-42b3-80de-fb0f4752b6e9" />
+
+
 
 ## Highlights
 
@@ -35,7 +37,8 @@ PrintFEA is a **design-screening tool**. The built-in filament profiles are cons
 - Saved setups, recent-result reopening, and side-by-side run comparison.
 - In-app Help, hover tooltips, and persistent diagnostics logging.
 
-![PrintFEA clicked-load setup](docs/images/contact-load-setup.png)
+<img width="1500" height="743" alt="contact-load-setup" src="https://github.com/user-attachments/assets/5bca81b6-da8c-4bed-918c-54fd815efe00" />
+
 
 ## Status
 
