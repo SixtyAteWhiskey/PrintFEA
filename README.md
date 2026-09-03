@@ -1,8 +1,18 @@
 # PrintFEA
 
-**Guided, FDM-aware structural screening in FreeCAD.**
+**Guided, FDM 3D printed part structural stress test screening in FreeCAD.**
 
-PrintFEA is a Linux-focused FreeCAD workbench that wraps FreeCAD FEM, Gmsh, and CalculiX in a guided workflow for FDM 3D-printed parts. It is designed for users who want to answer practical questions such as:
+## AI DISCLAIMER
+
+This was made using ChatGPT pro.
+
+I did the validation testing.
+
+## Its a Wrapper
+
+PrintFEA is a FreeCAD workbench plugin that wraps FreeCAD FEM, Gmsh, and CalculiX in a guided workflow for FDM 3D-printed parts. 
+
+It is designed for users who want to answer practical questions such as:
 
 - Where is this part fixed?
 - Where and how is it loaded?
@@ -11,9 +21,12 @@ PrintFEA is a Linux-focused FreeCAD workbench that wraps FreeCAD FEM, Gmsh, and 
 - Does the part meet a chosen safety-factor target?
 - Where is the likely high-utilization/failure region?
 
-PrintFEA is a **design-screening tool**, not engineering certification. The built-in filament profiles are conservative generic approximations and should not be treated as manufacturer-specific material certificates.
+PrintFEA is a **stress-test screening tool**, not engineering certification. 
 
-![PrintFEA FDM safety result](docs/images/results-fdm-safety.png)
+The built-in filament profiles are conservative generic approximations and should not be treated as manufacturer-specific material certificates.
+
+<img width="1500" height="593" alt="results-fdm-safety" src="https://github.com/user-attachments/assets/be8e2ef8-91e9-43d8-9c3a-309a8d7c0345" />
+
 
 ## Highlights
 
@@ -35,7 +48,8 @@ PrintFEA is a **design-screening tool**, not engineering certification. The buil
 - Saved setups, recent-result reopening, and side-by-side run comparison.
 - In-app Help, hover tooltips, and persistent diagnostics logging.
 
-![PrintFEA clicked-load setup](docs/images/contact-load-setup.png)
+<img width="1500" height="743" alt="contact-load-setup" src="https://github.com/user-attachments/assets/fa86ee85-7208-4d8e-85ee-33ed1b5f7fd2" />
+
 
 ## Status
 
