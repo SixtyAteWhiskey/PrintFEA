@@ -1,6 +1,6 @@
 # PrintFEA
 
-**Guided, FDM-aware structural screening in FreeCAD.**
+**Guided, FDM-aware structural stress simulation in FreeCAD.**
 
 PrintFEA is a Linux-focused FreeCAD workbench that wraps FreeCAD FEM, Gmsh, and CalculiX in a guided workflow for FDM 3D-printed parts. It is designed for users who want to answer practical questions such as:
 
