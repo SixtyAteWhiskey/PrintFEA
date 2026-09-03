@@ -44,7 +44,7 @@ PrintFEA is a **design-screening tool**. The built-in filament profiles are cons
 
 **Current release: v0.6.2**
 
-v0.6.2 is a small UX/diagnostics patch for the validation workflow.
+v0.6.2 makes the installed version visible directly in the analysis wizard and adds a prominent **Self-Test** button there. v0.6.1 introduced the analytical cantilever self-test with dedicated validation results, automatic load-linearity checks, and mesh-convergence checks; v0.6.0 introduced the validation material and custom material manager.
 
 ## Highlights
 
