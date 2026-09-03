@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="stress" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#2079d6"/>
+      <stop offset="0.48" stop-color="#28d7c8"/>
+      <stop offset="0.76" stop-color="#ffd43b"/>
+      <stop offset="1" stop-color="#ff5a36"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Simplified meshed structural part -->
+  <path d="M10 20 L37 10 L52 18 L25 29 Z" fill="url(#stress)" stroke="#17365f" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M10 20 L25 29 L25 49 L10 40 Z" fill="#2389d7" stroke="#17365f" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M25 29 L52 18 L52 38 L25 49 Z" fill="#2567b5" stroke="#17365f" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- FEM mesh -->
+  <g fill="none" stroke="#f7fbff" stroke-opacity="0.72" stroke-width="1.15">
+    <path d="M10 20 L25 49 M37 10 L25 49 M52 18 L10 40 M10 20 L52 38 M25 29 L52 18"/>
+    <path d="M17 17 L32 26 L45 15 M18 25 L45 14 L48 31 M12 32 L25 38 L52 28"/>
+  </g>
+
+  <!-- Fixed/support indicator -->
+  <g stroke="#17365f" stroke-width="1.5" stroke-linecap="round">
+    <path d="M6 18 V43" stroke="#54d67a" stroke-width="4"/>
+    <path d="M3 22 L8 18 M3 29 L8 25 M3 36 L8 32 M3 43 L8 39" stroke="#54d67a"/>
+  </g>
+
+  <!-- Applied force arrow -->
+  <g fill="#ff6b35" stroke="#8d2e17" stroke-width="1.4" stroke-linejoin="round">
+    <path d="M55 9 H59 V28 H63 L57 37 L51 28 H55 Z"/>
+  </g>
+</svg>
