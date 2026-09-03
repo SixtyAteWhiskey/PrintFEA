@@ -8,52 +8,6 @@ This simplifies that process into an intuitive GUI that allows the user to see h
 
 The layer-sliced estimator can be computationally expensive on detailed imported B-Reps. PrintFEA therefore **does not run it live** when a spinbox changes or when the BUILD PLATE face is captured. Those actions only invalidate the cached estimate. Use **Calculate print structure** when you want to preview the shell/core result. If the estimate is stale when **Run Analysis** is pressed, PrintFEA calculates it once before creating the FEM objects and reuses that exact estimate for the solve. Geometry-only slice results are cached, so changing only infill percentage can be refreshed very quickly after the first wall/core calculation.
 
-## How the v0.2 failure screen works
-
-FreeCAD's usual von Mises stress map is still useful for finding structural hotspots, but von Mises is an isotropic yield measure and does not by itself describe the weak layer direction of an FDM print.
-
-For a layer-aware run, PrintFEA instead evaluates the CalculiX stress tensor in the print-material coordinate system:
-
-| Local stress | PrintFEA interpretation |
-| --- | --- |
-| `S11`, `S22` | Normal stress within the layer plane |
-| `S33` | Normal stress through the layer stack |
-| `S12` | In-layer shear |
-| `S13`, `S23` | Inter-layer shear |
-
-For each result location, PrintFEA computes a conservative maximum-stress utilization:
-
-`utilization = max(|directional stress| / directional allowable)`
-
-The **99th-percentile utilization** controls the primary screening safety factor:
-
-`screening safety factor = 1 / P99 utilization`
-
-The absolute peak utilization is reported separately. This prevents one singular or mesh-sensitive node from silently controlling the entire broad-field verdict while still warning the user when a localized peak exceeds an allowable.
-
-Interpretation:
-
-- utilization `< 1.0` means the directional stress is below that generic screening allowable;
-- utilization `= 1.0` reaches the selected directional allowable;
-- utilization `> 1.0` exceeds it;
-- **PASS** additionally requires the screening safety factor to meet the user's target (default `2.0`).
-
-A concentrated peak can still produce **CAUTION** even when the P99 field passes.
-
-### FDM utilization heat map
-
-Layer-aware runs also create a persistent FreeCAD FEM Calculator Filter containing the same maximum directional stress/allowable ratio used by the numerical screening logic. This lets users see the layer-aware failure utilization directly on the model instead of inferring FDM risk from von Mises stress.
-
-The **Show FDM UTILIZATION** result view is dimensionless: `1.0` is the selected directional allowable, values below `1.0` are below that allowable, and values above `1.0` exceed it. The target safety-factor threshold is `1 / target safety factor` (for example, `0.5` for a target safety factor of `2.0`).
-
-## Generic material model
-
-The built-in material presets intentionally favor conservative screening rather than pretending to be exact filament datasheets. Each profile starts with an in-plane modulus and allowable and applies lower cross-layer stiffness/strength and inter-layer shear values.
-
-These values should eventually be replaced by a **calibrated material profile** derived from coupons printed on the same machine, filament, orientation, layer height, temperature, and process settings used for the real part.
-
-Layer height, wall count, line width, and infill are saved with every run. In v0.3.0, wall count/line width define the sampled-layer perimeter thickness and infill changes the homogenized remaining core. Layer height now sets the estimated physical print-layer count used by the shell/core sampler; very tall/fine-layer parts are sampled at a capped number of evenly spaced cross-sections for performance.
-
 ## Requirements
 
 - FreeCAD 1.1.x
