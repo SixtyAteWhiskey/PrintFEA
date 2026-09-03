@@ -39,9 +39,16 @@ PrintFEA is a **design-screening tool**. The built-in filament profiles are cons
 
 ## Status
 
-**Current release: v0.5.9**
+**Current release: v0.6.2**
 
-v0.5.9 is the first release-prep baseline after the main analysis workflow was validated interactively on Linux with FreeCAD 1.1.3. The solver physics are unchanged from the validated v0.4.x analysis path; v0.5 adds saved setups, run comparison, diagnostics, documentation, and release tooling.
+v0.6.2 is a small UX/diagnostics patch for the validation workflow.
+
+## Highlights
+
+- The wizard now displays the installed PrintFEA version in both its window title and header.
+- Added a visible **Self-Test** button to the wizard header.
+- The button launches the same five-case analytical validation suite available from the PrintFEA menu.
+- No solver, material, wall/infill, contact-load, or failure-screening physics changed from v0.6.1.
 
 ### Tested environment
 
